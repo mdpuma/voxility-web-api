@@ -1,0 +1,33 @@
+    <div class="container" style="padding-top: 30px;">
+	<table id="table" class="table table-bordered table-condensed table-hover">
+	  <thead>
+	    <th>Timestamp</th>
+	    <th>Protocol</th>
+	    <th>Source</th>
+	    <th>Destination</th>
+	    <th>Length</th>
+	  </thead>
+	  <tbody>
+<?php
+foreach($result as $row) {
+	?>
+		<tr>
+			<td><?=$row['timestamp']?></td>
+			<td><?=$row['protocol']?></td>
+			<td><?=$row['source']?></td>
+			<td><?=$row['destination']?></td>
+			<td><?=$row['length']?></td>
+		</tr>
+	<?php } ?>
+	   </tbody>
+	</table>
+	</div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		$('table').DataTable();
+	} );
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+    <div class="container">
+	<div class="row">
+	<table id="table" class="table table-bordered table-condensed table-hover">
+	  <thead>
+	    <th>IP address</th>
+	    <th>Attacks count</th>
+	    <th>Last attack</th>
+	  </thead>
+	  <tbody>
+<?php
+foreach($result as $row) {
+	?>
+		<tr>
+			<td><a href="<?=$path?>/?ip_address=<?=$row['ip']?>"><?=$row['ip']?></a></td>
+			<td><?=$row['count']?></td>
+			<td><?=$row['last_attack']?></td>
+		</tr>
+	<?php } ?>
+	   </tbody>
+	</table>
+	</div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		$('table').DataTable();
+	} );
+</script>
+</html>

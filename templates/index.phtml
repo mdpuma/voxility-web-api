@@ -1,0 +1,36 @@
+    <div class="container">
+	<div class="row">
+	<table id="table" class="table table-bordered table-condensed table-hover">
+	  <thead>
+	    <th>ID</th>
+	    <th>IP address</th>
+	    <th>Start</th>
+	    <th>End</th>
+	    <th>Type</th>
+	    <th>Attack details</th>
+	  </thead>
+	  <tbody>
+<?php
+foreach($result as $row) {
+	?>
+		<tr>
+			<td><?=$row['attackid']?></td>
+			<td><?=$row['ip']?></td>
+			<td><?=$row['start']?></td>
+			<td><?=$row['end']?></td>
+			<td><?=$row['type']?></td>
+			<td><a href="details/<?=$row['att_id']?>">Details</a></td>
+		</tr>
+	<?php } ?>
+	   </tbody>
+	</table>
+	</div>
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		$('table').DataTable();
+	} );
+</script>
+</body>
+</html>
