@@ -20,6 +20,6 @@ return [
 			'user' => 'root',
 			'pass' => '8u4Zj8TvYgwIpp',
 			'name' => 'voxility'
-        ]
+        ],
     ],
 ];

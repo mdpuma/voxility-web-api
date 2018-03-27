@@ -41,15 +41,30 @@ $container['voxility'] = function ($c) {
 			curl_setopt($ch, CURLOPT_URL, $url.'?'.http_build_query($params));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			$response = curl_exec($ch);
-			$response = json_decode($response);
 			curl_close($ch);
-			return $response;
+			
+			$response2 = json_decode($response);
+			if($response2 == NULL) {
+				return $response;
+			}
+			return $response2;
 		}
 		public function get_attack_detail($att_id) {
 			return $this->call_api($this->url.'/get_packet_samples.php', array('att_id' => $att_id));
 		}
 		public function get_attacks() {
 			return $this->call_api($this->url.'/get_attacks.php', array())->attacks;
+		}
+		public function get_list_json() {
+			return $this->call_api($this->url.'/list_json.php', array());
+		}
+		public function change_mode($ip, $mode, $no_l7) {
+			return $this->call_api($this->url.'/ips.php', array(
+				'ip' => $ip,
+				'mode' => $mode,
+				'no_l7' => $no_l7
+				
+			));
 		}
 		public function get_proto_name($i) {
 			switch($i) {

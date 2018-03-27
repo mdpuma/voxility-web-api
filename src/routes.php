@@ -29,14 +29,48 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 
 $app->get('/ips', function (Request $request, Response $response, array $args) {
 	$result = $this->db->query("SELECT ip, last_attack, count(attacks.id) as count FROM ip_addresses JOIN attacks on attacks.ipid = ip_addresses.id GROUP by ip LIMIT 10000");
+	$result2='';
+	foreach($result as $re) {
+		$re['mode'] = 2;
+		$re['l7'] = 0;
+		$result2[$re['ip']] = $re;
+	}
+	
+	$vox_list_json = $this->voxility->get_list_json();
+	foreach($vox_list_json as $i => $re) {
+		if($i == 'account' || $i == 'comment') continue;
+		list($i, $j) = @explode('/', $i);
+		if(!isset($result2[$i])) { // if ip is not present in database
+			$result2[$i] = array(
+				'ip' => $i,
+				'count' => 0,
+				'last_attack' => 'never',
+				'mode' => $re->mode,
+				'l7' => (int) !$re->no_l7,
+			);
+		} else {
+			$result2[$i] = array_merge($result2[$i], array(
+				'mode' => $re->mode,
+				'l7' => (int) !$re->no_l7,
+			));
+		}
+	}
 	
 	// Render index view
 	$this->renderer->render($response, 'header.html', ['path' => $request->getUri()->getBasePath()]);
 	$this->renderer->render($response, 'ips.html', array(
-		'result' => $result,
+		'result' => $result2,
 		'path' => $request->getUri()->getBasePath()
 	));
 	return;
+});
+
+$app->get('/change_mode/{ip}/{mode}/{no_l7}', function (Request $request, Response $response, array $args) {
+	if(!is_numeric($args['mode']) || !is_numeric($args['no_l7'])) {
+		return $response->withRedirect('/ips?error', 301);
+	}
+	$result = $this->voxility->change_mode($args['ip'], $args['mode'], $args['no_l7']);
+	return $response->withJson(array('result'=>$result));
 });
 
 $app->get('/details/{att_id}', function (Request $request, Response $response, array $args) {
@@ -76,12 +110,15 @@ $app->get('/cron', function (Request $request, Response $response, array $args) 
 	$sth4 = $sql->prepare("INSERT INTO attacks (ipid, start, end, action, type, att_id) values (:ipid, :start, :end, :action, :type, :att_id)");
 	$sth5 = $sql->prepare("UPDATE ip_addresses SET last_attack=:last_attack WHERE id=:ipid");
 
+	$log[] = 'fetch get_last_attacks from voxility';
 	foreach($attacks as $attack) {
 	// 	var_dump($attack);
 		$sth1->bindvalue(':att_id', $attack->att_id);
 		$sth1->execute();
 		$res = $sth1->fetchAll();
 		if(!empty($res)) continue;
+		
+		$log[] = 'processing att_id='.$attack->att_id;
 		
 		// add attack info in to database
 		$sth2->bindvalue('ip', $attack->ip);
@@ -112,6 +149,7 @@ $app->get('/cron', function (Request $request, Response $response, array $args) 
 		$sth5->bindvalue('ipid', $ip_id);
 		$sth5->bindvalue('last_attack', $end);
 		$sth5->execute();
+		$log[] = 'added new att_id='.$attack->att_id;
 	}
-	return $response->withJson(array('status'=>'success'));
+	return $response->withJson(array('status'=>'success','log'=>$log));
 });

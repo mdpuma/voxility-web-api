@@ -1,30 +1,34 @@
-    <div class="container">
+	<div class="container">
 	<div class="row">
 	<table id="table" class="table table-bordered table-condensed table-hover">
 	  <thead>
-	    <th>IP address</th>
-	    <th>Attacks count</th>
-	    <th>Last attack</th>
+		<th>Status</th>
+		<th>IP address</th>
+		<th>Attacks count</th>
+		<th>Last attack</th>
+		<th>Actions</th>
 	  </thead>
 	  <tbody>
 <?php
 foreach($result as $row) {
 	?>
 		<tr>
+			<td><span class="label <?=($row['mode']==1?'label-warning':'label-success')?>"><?=($row['mode']==1?'always on':'sensor')?></span> | <span class="label <?=($row['l7']==1?'label-warning':'label-success')?>"><?=($row['l7']==1?'L7 proxy is on':'L7 proxy is off')?></span></td>
 			<td><a href="<?=$path?>/?ip_address=<?=$row['ip']?>"><?=$row['ip']?></a></td>
 			<td><?=$row['count']?></td>
 			<td><?=$row['last_attack']?></td>
+			<td><a href="/change_mode/<?=$row['ip']?>/2/0">sensor + L7</a> | <a href="/change_mode/<?=$row['ip']?>/2/1">sensor</a> | <a href="/change_mode/<?=$row['ip']?>/1/0">always-on + L7</a> | <a href="/change_mode/<?=$row['ip']?>/1/1">always-on</a></td>
 		</tr>
 	<?php } ?>
 	   </tbody>
 	</table>
 	</div>
-    </div>
+	</div>
 </div>
 </body>
 <script type="text/javascript" charset="utf-8">
 	$(document).ready(function() {
-		$('table').DataTable();
+		$('table').DataTable().order( [ 3, 'desc' ] ).draw();;
 	} );
 </script>
 </html>
