@@ -29,7 +29,7 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 
 $app->get('/ips', function (Request $request, Response $response, array $args) {
 	$result = $this->db->query("SELECT ip, last_attack, count(attacks.id) as count FROM ip_addresses JOIN attacks on attacks.ipid = ip_addresses.id GROUP by ip LIMIT 10000");
-	$result2='';
+	$result2=array();
 	foreach($result as $re) {
 		$re['mode'] = 2;
 		$re['l7'] = 0;
