@@ -31,7 +31,7 @@ def write_prometheus_file(data):
             attack_type = entry.get("type", "unknown").replace(" ", "_")
 
             line = (
-                f'{METRIC_NAME}{{ip="{ip}",attack_type="{attack_type}"}} 1 {timestamp}'
+                f'{METRIC_NAME}{{ip="{ip}",attack_type="{attack_type}"}} 1'
             )
             lines.append(line)
 
