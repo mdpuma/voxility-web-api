@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests
 import time
 import os
@@ -43,10 +45,13 @@ def write_prometheus_file(data):
 def main():
     data = fetch_data()
     #print(data["attacks"])
-    if isinstance(data["attacks"], list) and data:
-        write_prometheus_file(data["attacks"])
-    else:
-        print("No valid data received.")
+    try:
+        if isinstance(data["attacks"], list) and data:
+            write_prometheus_file(data["attacks"])
+    except Exception as e:
+        data = []
+        write_prometheus_file(data)
+        #print("No valid data received.")
 
 if __name__ == "__main__":
     main()
